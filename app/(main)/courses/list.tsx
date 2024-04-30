@@ -1,12 +1,12 @@
+
 "use client" ;
 
-import { useTransition } from "react";
-//use a server action in its pending state
-import { useRouter } from "next/navigation";
 import { courses, userProgress } from "@/db/schema";
-import { upsertUserProgress } from "@/actions/user-progress";
-import { toast } from "sonner";
+import {  toast} from "sonner";
 import { Card } from "./card";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { upsertUserProgress } from "@/actions/user-progress";
 // courses: typeof gonna get the type from DB schema 
  
 
@@ -18,7 +18,7 @@ type Props = {
 
 export const List = ({courses,activeCourseId} :Props) =>{
     const router = useRouter();  
-    const [pending, startTransition]= useTransition();
+    const [pending,startTransition]= useTransition();
 
     const onClick = (id: number) => {
         if (pending) return;
@@ -28,8 +28,8 @@ export const List = ({courses,activeCourseId} :Props) =>{
         }
     
         startTransition(() => {
-          upsertUserProgress(id)
-            .catch(() => toast.error("Something went wrong."))
+          upsertUserProgress(id)  
+            .catch(() => toast.error("Something went wrong."));
         });
       };
     // startTransition : if user select a new course 
@@ -43,11 +43,14 @@ export const List = ({courses,activeCourseId} :Props) =>{
                 title={course.title}
                 imageSrc={course.imageSrc}
                 onClick={onClick}
-                // disabled={pending} for the loading effect
                 disabled={false}
                 active ={course.id === activeCourseId}
+                
                 />
-            ))}
+
+            )
+            
+            )}
         </div>
     );
 }; 

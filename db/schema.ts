@@ -1,19 +1,19 @@
-import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, text,boolean, pgEnum } from "drizzle-orm/pg-core";
-//serial : for auto-increment 
 
+import { relations } from "drizzle-orm";
+import { boolean,pgEnum,integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+//serial : for auto-increment 
 export const courses = pgTable("courses", {
     id: serial("id").primaryKey(),
     title: text("title").notNull(),
     imageSrc: text("image_src").notNull(),
-  });
-  
-  export const coursesRelations = relations(courses, ({ many }) => ({
-    userProgress: many(userProgress),
-    units: many(units),
-  }));
-  
-  export const units = pgTable("units", {
+
+});
+// relation of many to many bwn  course and userProgress 
+export const coursesRelations = relations( courses , ({many})=>({
+    userProgress:many(userProgress),
+}));
+
+export const units = pgTable("units", {
     id: serial("id").primaryKey(),
     title: text("title").notNull(), // Unit 1
     description: text("description").notNull(), // Learn the basics of spanish
@@ -24,7 +24,8 @@ export const courses = pgTable("courses", {
       .notNull(),
     order: integer("order").notNull(),
   });
-  
+
+
   export const unitsRelations = relations(units, ({ many, one }) => ({
     course: one(courses, {
       fields: [units.courseId],
@@ -32,7 +33,7 @@ export const courses = pgTable("courses", {
     }),
     lessons: many(lessons),
   }));
-  
+
   export const lessons = pgTable("lessons", {
     id: serial("id").primaryKey(),
     title: text("title").notNull(),
@@ -51,7 +52,7 @@ export const courses = pgTable("courses", {
     }),
     challenges: many(challenges),
   }));
-  
+
   export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"]);
   
   export const challenges = pgTable("challenges", {
@@ -119,20 +120,25 @@ export const courses = pgTable("courses", {
     })
   );
   
-  export const userProgress = pgTable("user_progress", {
-    userId: text("user_id").primaryKey(),
-    userName: text("user_name").notNull().default("User"),
-    userImageSrc: text("user_image_src").notNull().default("/mascot.svg"),
-    activeCourseId: integer("active_course_id").references(() => courses.id, {
-      onDelete: "cascade"
-    }),
-    hearts: integer("hearts").notNull().default(5),
-    points: integer("points").notNull().default(0),
-  });
   
-  export const userProgressRelations = relations(userProgress, ({ one }) => ({
-    activeCourse: one(courses, {
-      fields: [userProgress.activeCourseId],
-      references: [courses.id],
+
+
+export const userProgress = pgTable("user_progress", {
+    userId: text("user_id").primaryKey(),
+    userName: text("user_name").notNull(),
+    userImageSrc: text("user_image_src").notNull().default("/mascot.svg"),
+    activeCourseId: integer('active_course_id').references(() => courses.id,{onDelete:'cascade'}),
+     //when a course is deleted, remove the reference to it in,
+    hearts:integer("hearts").notNull().default(5),
+    points:integer("points").notNull().default(0),
+    
+});
+ 
+// relation of one to many bwn  activecourse and userProgress 
+
+export const userProgressRelations = relations( userProgress , ({one})=>({
+    activeCourse:one(courses,{
+        fields:[userProgress.activeCourseId],// the field used in the relationship
+        references:[courses.id]//  specifies the fields being referenced in the courses table.
     }),
-  }));
+}));

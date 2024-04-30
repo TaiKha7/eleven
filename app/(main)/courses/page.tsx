@@ -3,17 +3,16 @@ import { List } from "./list";
 
 
 const CoursesPage = async () => {
-    const coursesData =  getCourses();
-    const userProgressData = getUserProgress(); 
+    const coursesData =  getCourses(); 
+    const userProgressData= getUserProgress(); 
 
-    const [
+    const[
         courses,
         userProgress,
      ] = await Promise.all([
         coursesData,
-        userProgressData,
+        userProgressData
     ]);
-
     return (
         <div className="h-full max-w-[912px] px-3 mx-auto">
             <h1 className="text-2xl font-bold text-neutral-700">
@@ -24,7 +23,6 @@ const CoursesPage = async () => {
             activeCourseId={userProgress?.activeCourseId}
             />
         </div>
-    );
-};
-
- export default CoursesPage; 
+    )
+}
+ export default   CoursesPage ; 

@@ -20,120 +20,149 @@ const main = async () => {
         await db.delete(schema.challenges);
         await db.delete(schema.challengeProgress);
 
+
         await db.insert(schema.courses).values([
             // each course 
             {
                 id :1 , 
                 title:"Spanish", 
                 imageSrc:"/es.svg",
+
+
             }, 
             {
                 id :2 , 
                 title:"Italian", 
                 imageSrc:"/it.svg",
+
+
             },
             {
                 id :3 ,  // we can remove it as it's serial in the Schema (autoincremented)
                 title:"French", 
                 imageSrc:"/fr.svg",
+
+
             },
             {
                 id :4 , 
                 title:"Croation", 
                 imageSrc:"/hr.svg",
-            },
+
+
+            }
+          
+
+ 
+
+        ]); 
+
+         //creating unit for course 1
+         await db
+         .insert(schema.units)
+         .values([
+           {
+             id: 1,
+             courseId: 1, //Spanish
+             title: "Unit 1",
+             description: `Learn the basics of Spanish`,
+             order: 1,
+           },
+         ])
+
+         // For each unit, insert lessons
+        await db
+        .insert(schema.lessons)
+        .values([
+          { id: 1,
+              unitId: 1,
+              order: 1 ,
+              title: "Nouns",
+                
+              },
+              { 
+                id: 2,
+                  unitId: 1,
+                  order: 2,
+                  title: "Verbs",
+                    
+                  },
+                  { 
+                    id: 3,
+                      unitId: 1,
+                      order: 3,
+                      title: "Verbs",
+                        
+                      },
+                      { 
+                        id: 4,
+                          unitId: 1,
+                          order: 4,
+                          title: "Verbs",
+                           
+                          },
+                          { 
+                            id: 5,
+                              unitId: 1,
+                              order: 5,
+                              title: "Verbs",
+                          
+                              },
         ]);
 
-        //creating unit for course 1
+
+
         await db
-        .insert(schema.units)
+        .insert(schema.challenges)
         .values([
           {
             id: 1,
-            courseId: 1, //Spnaish
-            title: "Unit 1",
-            description: `Learn the basics of Spanish`,
+            lessonId: 1,
+            type: "SELECT",
             order: 1,
+            question: 'Which one of these is "the man"?',
+            
           },
-        ])
+        ]);
 
-        // For each unit, create lessons
-        await db
-          .insert(schema.lessons)
-          .values([
-            { 
-              id: 1,
-                unitId: 1,
-                 title: "Nouns",
-                  order: 1 
-                },
-                { 
-                  id: 3,
-                    unitId: 1,
-                     title: "Verbs",
-                      order: 3,
-                    },
-                    { 
-                      id: 4,
-                        unitId: 1,
-                         title: "Verbs",
-                          order: 4,
-                        },
-                        { 
-                          id: 5,
-                            unitId: 1,
-                             title: "Verbs",
-                              order: 5,
-                            },
-          ]);
+        await db.insert(schema.challengeOptions).values([
+          {
+            id: 1,
+            challengeId: 1, //which one is the man? question
+            correct: true,
+            text: "el hombre",
+            imageSrc: "/man.svg",
+            audioSrc: "/es_man.mp3",
+          },
+          {
+            id: 2,
+            challengeId: 1, //which one is the man? question
+            correct: false,
+            text: "la mujer",
+            imageSrc: "/woman.svg",
+            audioSrc: "/es_woman.mp3",
+          },
+          {
+            id: 3,
+            challengeId: 1, //which one is the man? question
+            correct: false,
+            text: "el robot",
+            imageSrc: "/robot.svg",
+            audioSrc: "/es_robot.mp3",
+          },        
+        ]);
 
-          await db
-          .insert(schema.challenges)
-          .values([
-            {
-              id: 1,
-              lessonId: 1,
-              type: "SELECT",
-              question: 'Which one of these is "the man"?',
-              order: 1,
-            },
-          ]);
-
-          await db.insert(schema.challengeOptions).values([
-            {
-              id: 1,
-              challengeId: 1, //which one is the man? question
-              correct: true,
-              text: "el hombre",
-              imageSrc: "/man.svg",
-              audioSrc: "/es_man.mp3",
-            },
-            {
-              id: 2,
-              challengeId: 1, //which one is the man? question
-              correct: false,
-              text: "la mujer",
-              imageSrc: "/woman.svg",
-              audioSrc: "/es_woman.mp3",
-            },
-            {
-              id: 3,
-              challengeId: 1, //which one is the man? question
-              correct: false,
-              text: "el robot",
-              imageSrc: "/robot.svg",
-              audioSrc: "/es_robot.mp3",
-            },        
-          ]);
 
         console.log("Seeding finished"); 
+
+
     }
-
-
     catch (error) {
         console.error(error);
         throw new Error("Failed to seed the DataBase ");
+        
+
     }
 } ; 
 
-main(); 
+main(); // call the function main()
