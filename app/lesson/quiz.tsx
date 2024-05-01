@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { useState, useTransition } from "react";
+import { reduceHearts } from "@/actions/user-progress";
 import { challengeOptions, challenges } from "@/db/schema";
 import { Header } from "./header";
 import { QuestionBubble } from "./question-bubble";
@@ -27,7 +28,7 @@ export const Quiz = ({
   initialLessonChallenges,
   userSubscription,
 }: Props) => {
-  const [isPending, startTransition] = useTransition();
+  const [pending, startTransition] = useTransition();
 
   const [hearts, setHearts] = useState(initialHearts);
   const [percentage, setPercentage] = useState(initialPercentage);
@@ -107,8 +108,22 @@ export const Quiz = ({
       });
     }
     else {
-      console.log("wrong option");
-    }
+      startTransition(() => {
+        reduceHearts(challenge.id)
+        .then((response) => {
+          if (response?.error === "hearts") {
+            console.error("Missing hearts");
+            return;
+          }
+
+          setStatus("wrong");
+
+          if (!response?.error) setHearts((prev) => Math.max(prev - 1, 0));
+
+        })
+        .catch(() => toast.error("Something went wrong. Please try again."));
+      });
+        }
   };
 
   const title =
@@ -144,7 +159,7 @@ export const Quiz = ({
                 status={status}
                 // status="correct"
                 selectedOption={selectedOption}
-                disabled={false}
+                disabled={pending}
                 type={challenge.type}
               />
             </div>
@@ -152,7 +167,7 @@ export const Quiz = ({
         </div>
       </div>
       <Footer 
-          disabled={!selectedOption} // disabled if we dont have a selected option
+          disabled={pending || !selectedOption} // disabled if we dont have a selected option
           status={status}
           onCheck={onContinue}
         />
