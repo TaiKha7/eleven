@@ -6,12 +6,14 @@ import { revalidatePath } from "next/cache";
 import { auth, currentUser } from "@clerk/nextjs";
 
 import db from "@/db/drizzle";
-//import { POINTS_TO_REFILL } from "@/constants";
+// import { POINTS_TO_REFILL } from "@/constants";
 import { getCourseById, getUserProgress } from "@/db/queries";
 import {  userProgress, challengeProgress, challenges } from "@/db/schema";
 
 // upsert () : if we already  have the course in our database then update . 
 //If we started the course Spanish then I passed to French and I want to go back to it We'll use upsert() method 
+
+const POINTS_TO_REFILL = 10;
 
 export const upsertUserProgress = async (courseId: number) => {
   const { userId } = await auth();
@@ -117,18 +119,7 @@ export const reduceHearts = async (challengeId: number) => {
   revalidatePath(`/lesson/${lessonId}`);
 
 };
-  /*
 
-
-
-
-  if (userSubscription?.isActive) {
-    return { error: "subscription" };
-  }
-
-
-
-};
 
 export const refillHearts = async () => {
   const currentUserProgress = await getUserProgress();
@@ -155,5 +146,19 @@ export const refillHearts = async () => {
   revalidatePath("/quests");
   revalidatePath("/leaderboard");
 };
+
+  /*
+
+
+
+
+  if (userSubscription?.isActive) {
+    return { error: "subscription" };
+  }
+
+
+
+};
+
 
 */
